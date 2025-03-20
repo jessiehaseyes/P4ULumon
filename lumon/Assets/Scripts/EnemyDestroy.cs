@@ -19,7 +19,7 @@ public class EnemyDestroy : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-         
+         Debug.Log("collided");
             SceneManager.LoadScene("EndGame");
         }
     }
