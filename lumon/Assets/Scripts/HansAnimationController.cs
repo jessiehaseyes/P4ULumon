@@ -1,10 +1,9 @@
 using UnityEngine;
 
-public class LiamAnimationStateController : MonoBehaviour
+public class HansAnimationController : MonoBehaviour
 {
     public Animator animator;
-    private int _isWalkingHash;  
-    private int _isRunningHash;
+ 
 
     private Vector2 _input;
     private Vector3 _moveDirection;
@@ -18,15 +17,15 @@ public class LiamAnimationStateController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         _characterController = GetComponent<CharacterController>();
-        _isWalkingHash = Animator.StringToHash("isWalking");
-        _isRunningHash = Animator.StringToHash("isRunning");
+
+    
     }
 
     // Update is called once per frame
     void Update()
     {
         HandleInput();
-        HandleAnimation();
+
         HandleMovement();
         HandleRotation();
     }
@@ -42,40 +41,14 @@ public class LiamAnimationStateController : MonoBehaviour
         _moveDirection = new Vector3(_input.x, 0f, _input.y);
     }
 
-    private void HandleAnimation()
-    {
-        bool isRunning = animator.GetBool(_isRunningHash);
-        bool isWalking = animator.GetBool(_isWalkingHash);
-        bool forwardPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.S);
-        bool runPressed = Input.GetKey(KeyCode.LeftShift);
-        
-        if (!isWalking && forwardPressed)
-        {
-            animator.SetBool(_isWalkingHash, true);
-        }
 
-        if (isWalking && !forwardPressed)
-        {
-            animator.SetBool(_isWalkingHash, false);
-        }
-
-        if (!isRunning && (forwardPressed && runPressed))
-        {
-            animator.SetBool(_isRunningHash, true);
-        }
-
-        if (isRunning && (!forwardPressed || !runPressed))
-        {
-            animator.SetBool(_isRunningHash, false);
-        }
-    }
 
     private void HandleMovement()
     {
         if (_input.sqrMagnitude == 0) return;
         
-        float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? speed * 2 : speed;
-        Vector3 movement = _moveDirection * currentSpeed * Time.deltaTime;
+ 
+        Vector3 movement = _moveDirection * Time.deltaTime;
         
         // Use CharacterController for movement if available, otherwise move the transform directly
         if (_characterController != null)
