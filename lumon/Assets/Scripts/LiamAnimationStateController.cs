@@ -33,12 +33,11 @@ public class LiamAnimationStateController : MonoBehaviour
 
     private void HandleInput()
     {
-        // Get input for movement
+
         float horizontal = Input.GetAxisRaw("Horizontal");
         float vertical = Input.GetAxisRaw("Vertical");
         _input = new Vector2(horizontal, vertical).normalized;
         
-        // Calculate move direction based on input
         _moveDirection = new Vector3(_input.x, 0f, _input.y);
     }
 
@@ -77,7 +76,7 @@ public class LiamAnimationStateController : MonoBehaviour
         float currentSpeed = Input.GetKey(KeyCode.LeftShift) ? speed * 2 : speed;
         Vector3 movement = _moveDirection * currentSpeed * Time.deltaTime;
         
-        // Use CharacterController for movement if available, otherwise move the transform directly
+      
         if (_characterController != null)
         {
             _characterController.Move(movement);

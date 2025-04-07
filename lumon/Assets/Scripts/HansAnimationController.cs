@@ -3,70 +3,65 @@ using UnityEngine;
 public class HansAnimationController : MonoBehaviour
 {
     public Animator animator;
- 
-
-    private Vector2 _input;
-    private Vector3 _moveDirection;
+    
+    private int _isWalkingHash;  
+    
     [SerializeField] private float smoothTime = 0.05f;
-    [SerializeField] private float speed = 5f;
     private float _currentVelocity;
     private CharacterController _characterController;
+    private ChaseMovement _chaseMovement;
+    private Vector3 _lastPosition;
+    private Vector3 _actualMoveDirection;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator = GetComponent<Animator>();
         _characterController = GetComponent<CharacterController>();
-
+        _chaseMovement = GetComponent<ChaseMovement>();
+        
+        _isWalkingHash = Animator.StringToHash("isWalking");
+        
+        if (animator != null)
+        {
+            animator.applyRootMotion = false;
+        }
+        
     
+        _lastPosition = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        HandleInput();
-
-        HandleMovement();
+        _actualMoveDirection = transform.position - _lastPosition;
+        _actualMoveDirection.y = 0; 
         HandleRotation();
-    }
-
-    private void HandleInput()
-    {
-        // Get input for movement
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
-        _input = new Vector2(horizontal, vertical).normalized;
+        HandleAnimation();
         
-        // Calculate move direction based on input
-        _moveDirection = new Vector3(_input.x, 0f, _input.y);
-    }
-
-
-
-    private void HandleMovement()
-    {
-        if (_input.sqrMagnitude == 0) return;
-        
- 
-        Vector3 movement = _moveDirection * Time.deltaTime;
-        
-        // Use CharacterController for movement if available, otherwise move the transform directly
-        if (_characterController != null)
-        {
-            _characterController.Move(movement);
-        }
-        else
-        {
-            transform.position += movement;
-        }
+        _lastPosition = transform.position;
     }
 
     private void HandleRotation()
     {
-        if (_input.sqrMagnitude == 0) return;
+        if (_chaseMovement != null && _chaseMovement.targetTrans != null)
+        {
+           
+            Vector3 direction = _chaseMovement.targetTrans.position - transform.position;
+            direction.y = 0; 
+            
+            if (direction.magnitude > 0.1f)
+            {
+                var targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+                var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
+                transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
+            }
+        }
+    }
+
+    private void HandleAnimation()
+    {
+   
+        bool isMoving = _actualMoveDirection.magnitude / Time.deltaTime > 0.1f;
         
-        var targetAngle = Mathf.Atan2(_moveDirection.x, _moveDirection.z) * Mathf.Rad2Deg;
-        var angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref _currentVelocity, smoothTime);
-        transform.rotation = Quaternion.Euler(0.0f, angle, 0.0f);
+        animator.SetBool(_isWalkingHash, isMoving);
     }
 }
