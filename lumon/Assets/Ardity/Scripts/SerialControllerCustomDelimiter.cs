@@ -18,7 +18,7 @@ using System.Threading;
 public class SerialControllerCustomDelimiter : MonoBehaviour
 {
     [Tooltip("Port name with which the SerialPort object will be created.")]
-    public string portName = "COM3";
+    public string portName = "usb:0/140000/0/4";
 
     [Tooltip("Baud rate that the serial device is using to transmit data.")]
     public int baudRate = 9600;

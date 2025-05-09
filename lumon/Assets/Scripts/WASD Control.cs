@@ -6,6 +6,8 @@ using System.Collections;
 public class WASDControl : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
+    public string comPort = "COM5";
+    public int baudRate = 9600;
     
     private SerialPort serialPort;
     private bool isLeft = false;
@@ -15,12 +17,10 @@ public class WASDControl : MonoBehaviour
     private bool isStill = true;
     private string serialInput = "";
     
-    
-    
     void Start()
     {
         // Configure and open the serial port
-        serialPort = new SerialPort("COM5", 9600);
+        serialPort = new SerialPort(comPort, baudRate);
         serialPort.ReadTimeout = 20; // Increased timeout
         serialPort.WriteTimeout = 20;
         serialPort.NewLine = "\n"; // Explicitly setting newline character
@@ -28,7 +28,7 @@ public class WASDControl : MonoBehaviour
         try
         {
             serialPort.Open();
-            Debug.Log("Serial port opened successfully on " + "COM5");
+            Debug.Log("Serial port opened successfully on " + comPort);
             StartCoroutine(ReadSerialData());
         }
         catch (Exception e)
@@ -114,35 +114,10 @@ public class WASDControl : MonoBehaviour
     
     void Update()
     {
-        // Handle keyboard input first
-        if (Input.GetKey(KeyCode.W))
-        {
-            isUp = true;
-            isStill = false;
-        }
-        
-        if (Input.GetKey(KeyCode.S))
-        {
-            isDown = true;
-            isStill = false;
-        }
-        
-        if (Input.GetKey(KeyCode.A))
-        {
-            isLeft = true;
-            isStill = false;
-        }
-        
-        if (Input.GetKey(KeyCode.D))
-        {
-            isRight = true;
-            isStill = false;
-        }
-        
         // Get current position
         Vector3 position = transform.position;
         
-        // Apply movement based on flags (from either Arduino or keyboard)
+        // Apply movement based on flags (from Arduino)
         if (isUp)
         {
             position += Vector3.forward * moveSpeed * Time.deltaTime;
@@ -165,17 +140,6 @@ public class WASDControl : MonoBehaviour
         
         // Apply the position change
         transform.position = position;
-        
-        // Reset flags after movement for keyboard controls
-        // (Arduino will update these in the next serial read)
-        if (Input.anyKey)
-        {
-            isLeft = false;
-            isRight = false;
-            isUp = false;
-            isDown = false;
-            isStill = true;
-        }
     }
     
     void OnApplicationQuit()
@@ -204,5 +168,22 @@ public class WASDControl : MonoBehaviour
                 Debug.LogError("Error closing serial port: " + e.Message);
             }
         }
+    }
+    
+    void OnMessageArrived(string msg)
+    {
+        Debug.Log(msg);
+        
+    }
+
+    // Invoked when a connect/disconnect event occurs. The parameter 'success'
+    // will be 'true' upon connection, and 'false' upon disconnection or
+    // failure to connect.
+    void OnConnectionEvent(bool success)
+    {
+        if (success)
+            Debug.Log("Connection established");
+        else
+            Debug.Log("Connection attempt failed or disconnection detected");
     }
 }

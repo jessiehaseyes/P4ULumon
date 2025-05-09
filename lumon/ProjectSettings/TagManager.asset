@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 3
   tags:
   - Cube
+  - CinemachineTarget
+  - RedBall
+  - GreenBall
+  - BlueBall
+  - YellowBall
   layers:
   - Default
   - TransparentFX

@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 public class ChaseMovement : MonoBehaviour
 {
-    public float speed = 1f;
+    public float speed = 0.1f;
 
     public Vector3 startPos;
     public Vector3 endPos;

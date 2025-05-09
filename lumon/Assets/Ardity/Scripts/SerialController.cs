@@ -25,8 +25,9 @@ using System.Threading;
  */
 public class SerialController : MonoBehaviour
 {
+
     [Tooltip("Port name with which the SerialPort object will be created.")]
-    public string portName = "COM6";
+    public string portName = "usb:0/140000/0/5";
 
     [Tooltip("Baud rate that the serial device is using to transmit data.")]
     public int baudRate = 9600;
@@ -54,6 +55,8 @@ public class SerialController : MonoBehaviour
     // Internal reference to the Thread and the object that runs in it.
     protected Thread thread;
     protected SerialThreadLines serialThread;
+    
+    
 
 
     // ------------------------------------------------------------------------
@@ -154,6 +157,23 @@ public class SerialController : MonoBehaviour
     public void SetTearDownFunction(TearDownFunction userFunction)
     {
         this.userDefinedTearDownFunction = userFunction;
+    }
+    
+    void OnMessageArrived(string msg)
+    {
+        Debug.Log("Message arrived: " + msg);
+    }
+
+    // Invoked when a connect/disconnect event occurs. The parameter 'success'
+    // will be 'true' upon connection, and 'false' upon disconnection or
+    // failure to connect.
+    void OnConnectionEvent(bool success)
+    {
+        if (success)
+            Debug.Log("Connection established");
+        
+        else
+            Debug.Log("Connection attempt failed or disconnection detected");
     }
 
 }
