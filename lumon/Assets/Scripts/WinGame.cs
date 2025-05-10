@@ -3,6 +3,7 @@ using System;
 using UnityEngine.SceneManagement;
 public class WinGame : MonoBehaviour
 {
+    public SerialController serialController;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,6 +17,7 @@ public class WinGame : MonoBehaviour
         {
             Debug.Log("collided");
             SceneManager.LoadScene("Win");
+            serialController.SendSerialMessage("reset");
         }
     }
     }

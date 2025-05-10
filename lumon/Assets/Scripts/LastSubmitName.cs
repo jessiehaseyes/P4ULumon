@@ -13,7 +13,7 @@ public class LastSubmitName : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("The current last name is:" + inputfield.text);
+ 
     }
 
     public void PlayerLastNamer()

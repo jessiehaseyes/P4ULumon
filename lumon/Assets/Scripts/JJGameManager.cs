@@ -1,12 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using TMPro;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 public class JJGameManager : MonoBehaviour
 {
+    
     [Header("Game Settings")]
     public float exitOpenDuration = 30f; // Duration the exit stays open in seconds
     public int requiredItems = 4; // Number of items needed to open exit (4 different colored balls)
+    public SerialController serialController;
     
     [Header("References")]
     public GameObject exitDoor;
@@ -97,19 +100,23 @@ public class JJGameManager : MonoBehaviour
         {
             case "GreenBall":
                 greenBallCollected = true;
-                Debug.Log("Green ball collected!");
+                Debug.Log("green");
+                serialController.SendSerialMessage("green");
                 break;
             case "RedBall":
                 redBallCollected = true;
-                Debug.Log("Red ball collected!");
+                Debug.Log("red");
+                serialController.SendSerialMessage("red");
                 break;
             case "BlueBall":
                 blueBallCollected = true;
-                Debug.Log("Blue ball collected!");
+                Debug.Log("blue");
+                serialController.SendSerialMessage("blue");
                 break;
             case "YellowBall":
                 yellowBallCollected = true;
-                Debug.Log("Yellow ball collected!");
+                Debug.Log("yellow");
+                serialController.SendSerialMessage("yellow");
                 break;
         }
         
@@ -165,7 +172,7 @@ public class JJGameManager : MonoBehaviour
             if (countdownTimerObject != null)
             {
                 countdownTimerObject.SetActive(false);
-             
+                SceneManager.LoadScene("EndGame");
             }
             
             Debug.Log("Exit closed! Collect all balls again.");
@@ -239,6 +246,7 @@ public class JJGameManager : MonoBehaviour
     
     public void PlayerReachedExit()
     {
+        serialController.SendSerialMessage("reset");
         // Stop the exit timer
         if (exitTimerCoroutine != null)
         {
@@ -252,7 +260,6 @@ public class JJGameManager : MonoBehaviour
         }
         
         // Player wins!
-        Debug.Log("Congratulations! You've won the game!");
         
         // Here you could load a win screen or next level
     }
@@ -271,5 +278,16 @@ public class JJGameManager : MonoBehaviour
             Debug.Log("Connection established");
         else
             Debug.Log("Connection attempt failed or disconnection detected");
+    }
+    
+   
+    void OnApplicationQuit()
+    {
+        // Check if serialController exists before sending
+        if (serialController != null)
+        {
+            Debug.Log("Exiting play mode, sending reset message");
+            serialController.SendSerialMessage("reset");
+        }
     }
 }

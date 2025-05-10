@@ -1,20 +1,20 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine. SceneManagement;
 
 public class SubmitName : MonoBehaviour
 {
-    public TextMeshProUGUI inputfield;
+    public TMP_InputField firstNameInputField; 
+    public TMP_InputField lastNameInputField;// Change to TMP_InputField instead of TextMeshProUGUI
     public string playerfirstName = "";
-
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.Log("The current name is:" + inputfield.text);
-    }
-
+    
     public void PlayerFirstNamer()
     {
-        playerfirstName = inputfield.text;
-        Debug.Log("The player name is:" + playerfirstName);
+        // Save the name to the GameManager when submitted
+        playerfirstName = firstNameInputField.text;
+        NameManager.Instance.playerName = firstNameInputField.text;
+        NameManager.Instance.playerLastName = lastNameInputField.text;
+        Debug.Log("Player name saved: " + firstNameInputField.text + " " + lastNameInputField.text);
+        
     }
 }

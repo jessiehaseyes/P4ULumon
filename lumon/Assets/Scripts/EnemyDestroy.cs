@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 
 public class EnemyDestroy : MonoBehaviour
 {
+    public SerialController serialController;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,6 +22,7 @@ public class EnemyDestroy : MonoBehaviour
         {
          Debug.Log("collided");
             SceneManager.LoadScene("EndGame");
+            serialController.SendSerialMessage("reset");
         }
     }
 }
